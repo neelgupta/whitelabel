@@ -6,6 +6,8 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class AdminSeeder extends Seeder
 {
@@ -28,16 +30,6 @@ class AdminSeeder extends Seeder
             ],
             [
                 'first_name' => 'Demo',
-                'last_name' => 'Company',
-                'email' => 'company@mailinator.com',
-                'contact_number' => '1234567890',
-                'user_type' => 'Company',
-                'password' => Hash::make('Company@2023'),
-                'view_password' => 'Company@2023',
-                'user_type' => '2',
-            ],
-            [
-                'first_name' => 'Demo',
                 'last_name' => 'User',
                 'email' => 'user@mailinator.com',
                 'contact_number' => '1234567890',
@@ -51,5 +43,25 @@ class AdminSeeder extends Seeder
         foreach ($user as $key => $value) {
             User::create($value);
         }
+
+        $user = User::create([
+            'first_name' => 'Demo',
+            'last_name' => 'Company',
+            'email' => 'company@mailinator.com',
+            'contact_number' => '1234567890',
+            'user_type' => 'Company',
+            'password' => Hash::make('Company@2023'),
+            'view_password' => 'Company@2023',
+            'user_type' => '2',
+        ]);
+
+
+        $role = Role::create(['name' => 'Company']);
+
+        $permissions = Permission::pluck('id', 'id')->all();
+
+        $role->syncPermissions($permissions);
+
+        $user->assignRole([$role->id]);
     }
 }
